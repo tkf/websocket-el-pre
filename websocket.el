@@ -125,13 +125,20 @@ the connection is closed, then CLOSE-CALLBACK is called."
                          (format "GET %s HTTP/1.1\r\n"
                                  (let ((path (url-filename url-struct)))
                                    (if (> (length path) 0) path "/"))))
-    (process-send-string conn
-                         (format "Upgrade: WebSocket\r\nConnection: Upgrade\r\nHost: %s\r\nOrigin: %s\r\nSec-WebSocket-Key1: %s\r\nSec-WebSocket-Key2: %s\r\n\r\n%s"
-                                 (url-host (url-generic-parse-url url))
-                                 system-name
-                                 (car key1-cons)
-                                 (car key2-cons)
-                                 (if websocket-use-v75 ""  bytes)))
+    (process-send-string
+     conn
+     (format (concat "Upgrade: WebSocket\r\n"
+                     "Connection: Upgrade\r\n"
+                     "Host: %s\r\n"
+                     "Origin: %s\r\n"
+                     "Sec-WebSocket-Key1: %s\r\n"
+                     "Sec-WebSocket-Key2: %s\r\n"
+                     "\r\n")
+             (url-host (url-generic-parse-url url))
+             system-name
+             (car key1-cons)
+             (car key2-cons)))
+    (unless websocket-use-v75 (process-send-string conn bytes))
     (websocket-debug websocket "Websocket opened")
     websocket))
 
