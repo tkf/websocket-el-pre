@@ -1,4 +1,4 @@
-;;; wave-client-websocket.el --- Methods to communicate with the Wave server
+;;; websocket.el --- Methods to communicate with the Wave server
 
 ;; Copyright (c) 2010 Andrew Hyatt
 ;;
@@ -33,7 +33,7 @@
 
 (require 'url-parse)
 (require 'calc)
-(require 'cl)
+(eval-when-compile (require 'cl))
 
 ;;; Code:
 (defstruct websocket
@@ -202,7 +202,6 @@ the connection is closed, then CLOSE-CALLBACK is called."
                       (websocket-filter websocket)
                       (websocket-close-callback websocket)))))
 
-(provide 'websocket)
 (provide 'websocket)
 
 ;;; websocket.el ends here
