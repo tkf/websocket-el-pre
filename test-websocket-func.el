@@ -29,7 +29,7 @@
 (sleep-for 0.1)
 (assert wstest-msgs)
 
-;; (websocket-close wstest-ws)
-;; (assert (null (websocket-openp wstest-ws)))
+(websocket-close wstest-ws)
+(assert (null (websocket-openp wstest-ws)))
 
 (stop-process wstest-server-proc)
