@@ -126,6 +126,7 @@ the connection is closed, then CLOSE-CALLBACK is called."
                          (format "GET %s HTTP/1.1\r\n"
                                  (let ((path (url-filename url-struct)))
                                    (if (> (length path) 0) path "/"))))
+    (websocket-debug websocket "Sending handshake")
     (process-send-string
      conn
      (format (concat "Upgrade: WebSocket\r\n"
@@ -139,6 +140,7 @@ the connection is closed, then CLOSE-CALLBACK is called."
              system-name
              (car key1-cons)
              (car key2-cons)))
+    (websocket-debug websocket "Sending bytes")
     (unless websocket-use-v75 (process-send-string conn bytes))
     (websocket-debug websocket "Websocket opened")
     websocket))
