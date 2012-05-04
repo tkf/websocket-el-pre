@@ -1,9 +1,10 @@
-;;; websocket.el --- Methods to communicate with the Wave server
+;;; websocket.el --- Emacs WebSocket client
 
+;; Copyright (c) 2012- Takafumi Arakaki
 ;; Copyright (c) 2010 Andrew Hyatt
 ;;
 ;; Author: Andrew Hyatt <ahyatt at gmail dot com>
-;; Maintainer: Andrew Hyatt <ahyatt at gmail dot com>
+;; Maintainer: Takafumi Arakaki <aka.tkf at gmail dot com>
 ;;
 ;; Licensed to the Apache Software Foundation (ASF) under one
 ;; or more contributor license agreements. See the NOTICE file
