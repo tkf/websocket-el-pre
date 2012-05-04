@@ -18,9 +18,6 @@ class EchoWebSocket(websocket.WebSocketHandler):
     def on_close(self):
         logging.info("ON_CLOSE")
 
-    def allow_draft76(self):
-        return True
-
 
 if __name__ == "__main__":
     import tornado.options

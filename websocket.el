@@ -54,36 +54,10 @@ Best set in a LET statement around the `websocket-open' reply.")
 The buffer is ` *websocket URL debug*' where URL is the
 URL of the connection.")
 
-(defun websocket-genbytes ()
-  "Generate bytes used at the end of the handshake."
-  (let ((s "        "))
-    (dotimes (i 8)
-      (aset s i (random 256)))
-    (assert (= (string-bytes s) 8))
-    s))
-
-(defun websocket-random-insert (str-to-insert target-str)
-  "Insert STR-TO-INSERT at a random position in TARGET-STR."
-  (let ((r (+ 1 (random (- (length target-str) 2)))))
-    (concat (substring target-str 0 r) str-to-insert
-            (substring target-str r))))
-
 (defun websocket-genkey ()
   "Generate a key suitable for the websocket handshake."
-  (let* ((num-spaces (+ 1 (random 12)))
-         (max-num-str (calc-eval (format "floor(random(4294967295 / %d)) * %d"
-                                         num-spaces num-spaces)))
-         (num max-num-str))
-    (dotimes (_ num-spaces)
-      (setq max-num-str (websocket-random-insert " " max-num-str)))
-    (dotimes (_ (+ 1 (random 12)))
-      (setq max-num-str (websocket-random-insert
-                         (let ((r (random 82)))
-                           (char-to-string
-                            (if (< r 15) (+ 33 r)
-                               (+ 58 (- r 15)))))
-                         max-num-str)))
-    (cons max-num-str num)))
+  (base64-encode-string
+   (apply 'string (loop repeat 16 collect (random 256)))))
 
 (defun websocket-open (url filter &optional close-callback)
   "Open a websocket connection to URL.
@@ -91,9 +65,7 @@ Websocket packets are sent as the only argument to FILTER, and if
 the connection is closed, then CLOSE-CALLBACK is called."
   (let* ((name (format "websocket to %s" url))
          (url-struct (url-generic-parse-url url))
-         (key1-cons (websocket-genkey))
-         (key2-cons (websocket-genkey))
-         (bytes (websocket-genbytes))
+         (key (websocket-genkey))
          (buf-name (format " *%s*" name))
          (coding-system-for-read 'binary)
          (coding-system-for-write 'binary)
@@ -133,15 +105,13 @@ the connection is closed, then CLOSE-CALLBACK is called."
                      "Connection: Upgrade\r\n"
                      "Host: %s\r\n"
                      "Origin: %s\r\n"
-                     "Sec-WebSocket-Key1: %s\r\n"
-                     "Sec-WebSocket-Key2: %s\r\n"
+                     "Sec-WebSocket-Key: %s\r\n"
+                     "Sec-WebSocket-Version: 13\r\n"
                      "\r\n")
              (url-host (url-generic-parse-url url))
              system-name
-             (car key1-cons)
-             (car key2-cons)))
+             key))
     (websocket-debug websocket "Sending bytes")
-    (unless websocket-use-v75 (process-send-string conn bytes))
     (websocket-debug websocket "Websocket opened")
     websocket))
 
